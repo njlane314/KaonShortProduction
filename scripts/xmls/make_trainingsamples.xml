@@ -38,7 +38,7 @@
   <stage name="analyse">
   <inputdef>prod_strange_resample_fhc_run2_fhc_reco2_reco2</inputdef>
   <initsource>/pnfs/uboone/resilient/users/cthorpe/HyperonCode/scripts/setup_torch.sh</initsource>
-  <fcl>run_signatureintegrityfilter.fcl</fcl>
+  <!--<fcl>run_signatureintegrityfilter.fcl</fcl>-->
   <fcl>run_networktraining.fcl</fcl>
   <!--<fcl>run_networktraining_k0.fcl</fcl>-->
   <!--<fcl>run_networktraining_Lambda.fcl</fcl>-->

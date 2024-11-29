@@ -89,6 +89,8 @@ public:
         return found_signature;
     }
 
+    virtual reconstruction::ReconstructionAlgorithmBase* createReconstructionAlgorithm() const = 0;
+
 protected:
     std::unordered_map<int, float> _thresh_map;
 

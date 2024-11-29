@@ -12,6 +12,7 @@ class ChargedSigmaSignature : public SignatureToolBase
 public:
     explicit ChargedSigmaSignature(const fhicl::ParameterSet& pset)
     : _MCPproducer{pset.get<art::InputTag>("MCPproducer", "largeant")}
+    , _reco_pset{pset.get<fhicl::ParameterSet>("ReconstructionConfig")}
     {
         configure(pset); 
     }
@@ -25,8 +26,17 @@ public:
 protected:
     void findSignature(art::Event const& evt, SignatureCollection& signature_coll, bool& found_signature) override;
 
+    reconstruction::ReconstructionAlgorithmBase* createReconstructionAlgorithm() const 
+    {
+        auto* algo = new reconstruction::ChargedKinkReconstruction();
+        algo->configure(_reco_pset); 
+        
+        return algo;
+    }
+
 private:
-    art::InputTag _MCPproducer;  
+    art::InputTag _MCPproducer; 
+    fhicl::ParameterSet _reco_pset; 
 };
 
 void ChargedSigmaSignature::findSignature(art::Event const& evt, SignatureCollection& signature_coll, bool& found_signature)
@@ -44,11 +54,9 @@ void ChargedSigmaSignature::findSignature(art::Event const& evt, SignatureCollec
         int pdg_code = std::abs(mc_particle.PdgCode());
 
         if (pdg_code == 3112)
-        {
             std::cout << "End process: " << mc_particle.EndProcess() << std::endl;
-        }
 
-        if (pdg_code == 3112 && mc_particle.Process() == "primary" && (mc_particle.EndProcess() == "Decay" || mc_particle.EndProcess() == "FastScintillation")  && !found_signature) 
+        if (pdg_code == 3112 && mc_particle.Process() == "primary" && (mc_particle.EndProcess() == "Decay")  && !found_signature) 
         {
             auto daughters = common::GetDaughters(mcp_map.at(mc_particle.TrackId()), mcp_map);
             daughters.erase(std::remove_if(daughters.begin(), daughters.end(), [](const auto& dtr) {
